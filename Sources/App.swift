@@ -20,7 +20,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         setupStatusItem()
         createBreatheWindow()
 
-        _ = engine.$isCompactMode.sink { [weak self] _ in
+        engine.$isCompactMode.sink { [weak self] _ in
             self?.resizeWindowForMode()
         }.store(in: &cancellables)
     }
@@ -53,9 +53,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         breatheWindow = panel
 
         engine.$opacity
-            .sink { [weak panel] val in
-                panel?.alphaValue = val
-            }
+            .sink { [weak panel] val in panel?.alphaValue = val }
             .store(in: &cancellables)
     }
 
@@ -97,6 +95,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
         menu.addItem(buildDurationItem(label: "吸气", current: engine.inhaleSeconds, action: #selector(setInhale(_:))))
         menu.addItem(buildDurationItem(label: "呼气", current: engine.exhaleSeconds, action: #selector(setExhale(_:))))
+        menu.addItem(buildHoldItem())
 
         menu.addItem(.separator())
 
@@ -122,6 +121,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             let opt = NSMenuItem(title: "\(s) 秒", action: action, keyEquivalent: "")
             opt.tag = s
             opt.state = (s == current) ? .on : .off
+            sub.addItem(opt)
+        }
+        item.submenu = sub
+        return item
+    }
+
+    private func buildHoldItem() -> NSMenuItem {
+        let current = engine.holdSeconds
+        let display = current == floor(current) ? String(format: "%.0f", current) : String(format: "%.1f", current)
+        let item = NSMenuItem(title: "屏息: \(display) 秒", action: nil, keyEquivalent: "")
+        let sub = NSMenu()
+        for s in [0, 0.5, 1.0, 1.5, 2.0, 3.0] {
+            let label = s == floor(s) ? String(format: "%.0f 秒", s) : String(format: "%.1f 秒", s)
+            let opt = NSMenuItem(title: label, action: #selector(setHold(_:)), keyEquivalent: "")
+            opt.tag = Int(s * 10)
+            opt.state = (abs(s - current) < 0.01) ? .on : .off
             sub.addItem(opt)
         }
         item.submenu = sub
@@ -170,6 +185,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     @objc private func setExhale(_ sender: NSMenuItem) {
         engine.exhaleSeconds = sender.tag
+        rebuildStatusMenu()
+    }
+
+    @objc private func setHold(_ sender: NSMenuItem) {
+        engine.holdSeconds = Double(sender.tag) / 10.0
         rebuildStatusMenu()
     }
 

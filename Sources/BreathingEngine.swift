@@ -4,16 +4,29 @@ import Combine
 final class BreathingEngine: ObservableObject {
 
     enum Phase: Equatable {
-        case inhale, exhale
+        case inhale, holdAfterInhale, exhale, holdAfterExhale
 
         var label: String {
             switch self {
-            case .inhale: return "吸气"
-            case .exhale: return "呼气"
+            case .inhale:           return "吸气"
+            case .holdAfterInhale:  return "屏息"
+            case .exhale:           return "呼气"
+            case .holdAfterExhale:  return "屏息"
             }
         }
 
-        var next: Phase { self == .inhale ? .exhale : .inhale }
+        var isHolding: Bool {
+            self == .holdAfterInhale || self == .holdAfterExhale
+        }
+
+        var next: Phase {
+            switch self {
+            case .inhale:           return .holdAfterInhale
+            case .holdAfterInhale:  return .exhale
+            case .exhale:           return .holdAfterExhale
+            case .holdAfterExhale:  return .inhale
+            }
+        }
     }
 
     private static let minScale: Double = 0.6
@@ -29,6 +42,11 @@ final class BreathingEngine: ObservableObject {
         didSet {
             UserDefaults.standard.set(exhaleSeconds, forKey: "exhaleSeconds")
             if !isRunning { reset() }
+        }
+    }
+    @Published var holdSeconds: Double = 0.5 {
+        didSet {
+            UserDefaults.standard.set(holdSeconds, forKey: "holdSeconds")
         }
     }
 
@@ -48,8 +66,13 @@ final class BreathingEngine: ObservableObject {
     private var timer: Timer?
     private var phaseStartTime: Date?
 
-    var currentPhaseSeconds: Int {
-        phase == .inhale ? inhaleSeconds : exhaleSeconds
+    var currentPhaseSeconds: Double {
+        switch phase {
+        case .inhale:           return Double(inhaleSeconds)
+        case .exhale:           return Double(exhaleSeconds)
+        case .holdAfterInhale,
+             .holdAfterExhale:  return holdSeconds
+        }
     }
 
     let breathColor = Color(red: 0.22, green: 0.65, blue: 0.70)
@@ -72,6 +95,9 @@ final class BreathingEngine: ObservableObject {
         let savedExhale = d.integer(forKey: "exhaleSeconds")
         exhaleSeconds = savedExhale > 0 ? savedExhale : 4
 
+        let savedHold = d.double(forKey: "holdSeconds")
+        holdSeconds = savedHold > 0 ? savedHold : 0.5
+
         let savedOpacity = d.double(forKey: "opacity")
         opacity = savedOpacity > 0 ? savedOpacity : 0.85
 
@@ -83,7 +109,7 @@ final class BreathingEngine: ObservableObject {
         guard !isRunning else { return }
         isRunning = true
         phaseStartTime = Date()
-        remainingSeconds = currentPhaseSeconds
+        remainingSeconds = Int(ceil(currentPhaseSeconds))
         timer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { [weak self] _ in
             self?.tick()
         }
@@ -107,17 +133,25 @@ final class BreathingEngine: ObservableObject {
     private func tick() {
         guard let startTime = phaseStartTime else { return }
         let elapsed  = Date().timeIntervalSince(startTime)
-        let total    = Double(currentPhaseSeconds)
-        let fraction = min(elapsed / total, 1.0)
+        let total    = currentPhaseSeconds
+        let f = total > 0 ? min(elapsed / total, 1.0) : 1.0
         remainingSeconds = max(Int(ceil(total - elapsed)), 0)
-        progress = phase == .inhale
-            ? Self.minScale + (Self.maxScale - Self.minScale) * fraction
-            : Self.maxScale - (Self.maxScale - Self.minScale) * fraction
+
+        switch phase {
+        case .inhale:
+            progress = Self.minScale + (Self.maxScale - Self.minScale) * f
+        case .exhale:
+            progress = Self.maxScale - (Self.maxScale - Self.minScale) * f
+        case .holdAfterInhale:
+            progress = Self.maxScale
+        case .holdAfterExhale:
+            progress = Self.minScale
+        }
 
         guard elapsed >= total else { return }
         phase = phase.next
         phaseStartTime = Date()
-        remainingSeconds = currentPhaseSeconds
+        remainingSeconds = Int(ceil(currentPhaseSeconds))
     }
 
     deinit { timer?.invalidate() }
