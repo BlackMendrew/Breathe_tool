@@ -13,7 +13,9 @@ struct ContentView: View {
 
     private var compactBody: some View {
         ZStack {
-            Rectangle().fill(engine.phase.color)
+            Rectangle()
+                .fill(engine.phase.color.opacity(engine.brightness))
+                .animation(.easeInOut(duration: 0.8), value: engine.phase)
 
             HStack(spacing: 6) {
                 Text(engine.phase.label)
@@ -34,7 +36,9 @@ struct ContentView: View {
 
     private var circleBody: some View {
         ZStack {
-            Rectangle().fill(engine.phase.color)
+            Rectangle()
+                .fill(engine.phase.color.opacity(engine.brightness))
+                .animation(.easeInOut(duration: 0.8), value: engine.phase)
 
             Circle()
                 .fill(
