@@ -57,10 +57,7 @@ final class BreathingEngine: ObservableObject {
     var brightness: Double {
         guard isRunning else { return 0.7 }
         let t = (progress - Self.minScale) / (Self.maxScale - Self.minScale)
-        switch phase {
-        case .inhale: return 0.55 + t * 0.45
-        case .exhale: return 1.0 - t * 0.45
-        }
+        return 0.55 + t * 0.45
     }
 
     init() {
