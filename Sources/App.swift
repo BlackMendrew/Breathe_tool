@@ -61,7 +61,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     private var windowSize: NSSize {
-        engine.isCompactMode ? NSSize(width: 120, height: 28) : NSSize(width: 180, height: 200)
+        engine.isCompactMode ? NSSize(width: 200, height: 40) : NSSize(width: 180, height: 200)
     }
 
     private func resizeWindowForMode() {

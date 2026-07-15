@@ -16,21 +16,36 @@ struct ContentView: View {
         ZStack {
             VisualEffectBlur(material: .hudWindow, blendingMode: .behindWindow)
 
-            RoundedRectangle(cornerRadius: 9)
+            RoundedRectangle(cornerRadius: 4)
                 .fill(
                     LinearGradient(
                         gradient: Gradient(colors: [
-                            engine.phase.color.opacity(engine.isRunning ? engine.progress * 0.55 : 0.18),
-                            engine.phase.color.opacity(engine.isRunning ? engine.progress * 0.20 : 0.06),
+                            engine.phase.color.opacity(engine.isRunning ? engine.progress * 0.55 : 0.10),
+                            engine.phase.color.opacity(engine.isRunning ? engine.progress * 0.25 : 0.05),
                         ]),
                         startPoint: .leading,
                         endPoint: .trailing
                     )
                 )
-                .padding(3)
+                .padding(2)
+
+            HStack(spacing: 6) {
+                Text(engine.phase.label)
+                    .font(.system(size: 15, weight: .semibold, design: .rounded))
+                    .foregroundColor(engine.phase.color)
+
+                Text("·")
+                    .font(.system(size: 13, weight: .light))
+                    .foregroundColor(.white.opacity(0.4))
+
+                Text("\(engine.remainingSeconds)")
+                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .foregroundColor(.white)
+                    .contentTransition(.numericText())
+            }
         }
-        .frame(width: 120, height: 28)
-        .clipShape(RoundedRectangle(cornerRadius: 9))
+        .frame(width: 200, height: 40)
+        .clipShape(RoundedRectangle(cornerRadius: 4))
         .onTapGesture { engine.toggle() }
     }
 
