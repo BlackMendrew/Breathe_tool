@@ -1,5 +1,4 @@
 import SwiftUI
-import AppKit
 
 struct ContentView: View {
     @EnvironmentObject var engine: BreathingEngine
@@ -14,29 +13,16 @@ struct ContentView: View {
 
     private var compactBody: some View {
         ZStack {
-            VisualEffectBlur(material: .hudWindow, blendingMode: .behindWindow)
-
-            RoundedRectangle(cornerRadius: 4)
-                .fill(
-                    LinearGradient(
-                        gradient: Gradient(colors: [
-                            engine.phase.color.opacity(engine.isRunning ? engine.progress * 0.55 : 0.10),
-                            engine.phase.color.opacity(engine.isRunning ? engine.progress * 0.25 : 0.05),
-                        ]),
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                )
-                .padding(2)
+            engine.phase.color.opacity(engine.isRunning ? engine.progress * 0.65 : 0.12)
 
             HStack(spacing: 6) {
                 Text(engine.phase.label)
                     .font(.system(size: 15, weight: .semibold, design: .rounded))
-                    .foregroundColor(engine.phase.color)
+                    .foregroundColor(.white)
 
                 Text("·")
                     .font(.system(size: 13, weight: .light))
-                    .foregroundColor(.white.opacity(0.4))
+                    .foregroundColor(.white.opacity(0.5))
 
                 Text("\(engine.remainingSeconds)")
                     .font(.system(size: 18, weight: .bold, design: .rounded))
@@ -51,9 +37,7 @@ struct ContentView: View {
 
     private var circleBody: some View {
         ZStack {
-            VisualEffectBlur(material: .hudWindow, blendingMode: .behindWindow)
-
-            engine.windowTint.opacity(engine.isRunning ? 0.18 : 0.06)
+            engine.windowTint.opacity(engine.isRunning ? 0.15 : 0.05)
 
             VStack(spacing: 0) {
                 Spacer()
@@ -105,26 +89,5 @@ struct ContentView: View {
         .frame(width: 180, height: 200)
         .clipShape(RoundedRectangle(cornerRadius: 20))
         .onTapGesture { engine.toggle() }
-    }
-}
-
-struct VisualEffectBlur: NSViewRepresentable {
-    let material: NSVisualEffectView.Material
-    let blendingMode: NSVisualEffectView.BlendingMode
-
-    func makeNSView(context: Context) -> NSVisualEffectView {
-        let v = NSVisualEffectView()
-        v.material = material
-        v.blendingMode = blendingMode
-        v.state = .active
-        v.wantsLayer = true
-        v.layer?.cornerRadius = 20
-        v.layer?.masksToBounds = true
-        return v
-    }
-
-    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {
-        nsView.material = material
-        nsView.blendingMode = blendingMode
     }
 }
