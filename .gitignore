@@ -1,0 +1,21 @@
+# Build artifacts
+BreatheTool.app/
+*.dmg
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Icon
+Icon
+
+# IDE / Editor
+.vscode/
+.idea/
+
+# Swift
+.build/
+*.o
+*.swiftdoc
+*.swiftmodule
