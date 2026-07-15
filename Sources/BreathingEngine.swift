@@ -54,10 +54,13 @@ final class BreathingEngine: ObservableObject {
 
     let breathColor = Color(red: 0.22, green: 0.65, blue: 0.70)
 
+    var fraction: Double {
+        (progress - Self.minScale) / (Self.maxScale - Self.minScale)
+    }
+
     var brightness: Double {
         guard isRunning else { return 0.7 }
-        let t = (progress - Self.minScale) / (Self.maxScale - Self.minScale)
-        return 0.55 + t * 0.45
+        return 0.55 + fraction * 0.45
     }
 
     init() {

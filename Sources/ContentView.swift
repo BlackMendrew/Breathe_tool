@@ -15,17 +15,25 @@ struct ContentView: View {
         ZStack {
             Rectangle().fill(engine.breathColor.opacity(engine.brightness))
 
-            HStack(spacing: 6) {
+            HStack(spacing: 8) {
                 Text(engine.phase.label)
-                    .font(.system(size: 14, weight: .semibold, design: .rounded))
+                    .font(.system(size: 13, weight: .semibold, design: .rounded))
                     .foregroundColor(.white)
-                Text("·")
-                    .foregroundColor(.white.opacity(0.4))
-                Text("\(engine.remainingSeconds)")
-                    .font(.system(size: 17, weight: .bold, design: .rounded))
-                    .foregroundColor(.white)
-                    .contentTransition(.numericText())
+
+                GeometryReader { geo in
+                    ZStack(alignment: .leading) {
+                        RoundedRectangle(cornerRadius: 3)
+                            .fill(Color.white.opacity(0.2))
+                            .frame(height: 6)
+
+                        RoundedRectangle(cornerRadius: 3)
+                            .fill(Color.white.opacity(0.7))
+                            .frame(width: max(geo.size.width * engine.fraction, 6), height: 6)
+                    }
+                    .frame(maxHeight: .infinity)
+                }
             }
+            .padding(.horizontal, 10)
         }
         .frame(width: 200, height: 40)
         .clipShape(RoundedRectangle(cornerRadius: 4))
