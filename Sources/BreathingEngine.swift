@@ -42,7 +42,7 @@ final class BreathingEngine: ObservableObject {
             if !isRunning { reset() }
         }
     }
-    @Published var holdSeconds: Double = 0.5 {
+    @Published var holdSeconds: Double = 0 {
         didSet {
             UserDefaults.standard.set(holdSeconds, forKey: "holdSeconds")
         }
@@ -94,7 +94,7 @@ final class BreathingEngine: ObservableObject {
         exhaleSeconds = savedExhale > 0 ? savedExhale : 4
 
         let savedHold = d.double(forKey: "holdSeconds")
-        holdSeconds = savedHold > 0 ? savedHold : 0.5
+        holdSeconds = savedHold >= 0 ? savedHold : 0
 
         let savedOpacity = d.double(forKey: "opacity")
         opacity = savedOpacity > 0 ? savedOpacity : 0.85
