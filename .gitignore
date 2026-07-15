@@ -1,6 +1,8 @@
 # Build artifacts
 BreatheTool.app/
 *.dmg
+BreatheTool.icns
+AppIcon.iconset/
 
 # macOS
 .DS_Store

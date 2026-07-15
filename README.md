@@ -1,51 +1,52 @@
-# 🫁 BreatheTool
+# 🫁 BreatheTool — 呼吸练习悬浮工具
 
-A minimal, always-on-top breathing exercise tool for macOS.  
-macOS 悬浮置顶呼吸法练习工具。
+macOS 悬浮置顶的呼吸法练习工具。极简设计，全屏可用。
 
 <p align="center">
-  <img src="screenshots/idle.png" width="180" alt="Idle state" />
-  <img src="screenshots/inhale.png" width="180" alt="Inhale phase" />
-  <img src="screenshots/exhale.png" width="180" alt="Exhale phase" />
+  <img src="screenshots/idle.png" width="180" alt="空闲状态" />
+  <img src="screenshots/inhale.png" width="180" alt="吸气阶段" />
+  <img src="screenshots/exhale.png" width="180" alt="呼气阶段" />
 </p>
 
-## Features / 功能
+---
 
-- **Always on top** — floats above all windows, including fullscreen apps
-- **Click to start/stop** — tap the window center, no buttons needed
-- **Configurable breathing rhythm** — set inhale & exhale durations independently (2—10s)
-- **Color-coded phases** — blue during inhale, warm orange during exhale
-- **Adjustable opacity** — transparency slider in the menu bar
-- **Minimal UI** — no title bar, no buttons, just a breathing circle
-- **Status bar menu** — all settings accessible from the menu bar 🫁 icon
-- **Works on all spaces** — stays visible even on fullscreen/other desktop spaces
+## 功能
+
+- 📌 **始终置顶** — 悬浮在所有窗口上方，包括全屏应用
+- 👆 **点击即用** — 点击窗口中心开始/暂停，无需任何按钮
+- ⏱️ **可调节节奏** — 吸气和呼气时长独立设置（2—10 秒）
+- 🎨 **颜色区分** — 吸气蓝色、呼气暖橙色，整窗口随呼吸变色
+- 🔍 **可调透明度** — 菜单栏透明度滑块，20%—100% 自由调节
+- 🪟 **极简界面** — 无标题栏、无按钮，只有一个呼吸圆环
+- 📊 **菜单栏图标** — 所有设置通过菜单栏 🫁 图标完成
+- 🖥️ **跨空间显示** — 即使切换到全屏 App 也保持可见
 
 ---
 
-## Screenshots / 截图
+## 截图
 
-| Idle | Inhale | Exhale |
-|------|--------|--------|
-| ![idle](screenshots/idle.png) | ![inhale](screenshots/inhale.png) | ![exhale](screenshots/exhale.png) |
+| 空闲状态 | 吸气中 | 呼气中 |
+|:---:|:---:|:---:|
+| ![空闲](screenshots/idle.png) | ![吸气](screenshots/inhale.png) | ![呼气](screenshots/exhale.png) |
 
 ---
 
-## Installation / 安装
+## 安装
 
-### Download DMG (Recommended)
+### 推荐：下载 DMG
 
-1. Go to [Releases](https://github.com/BlackMendrew/Breathe_tool/releases)
-2. Download `BreatheTool.dmg`
-3. Open the DMG and drag `BreatheTool.app` to your `/Applications` folder
-4. Right-click → **Open** the first time (unsigned app — see below)
+1. 打开 [Releases](https://github.com/BlackMendrew/Breathe_tool/releases) 页面
+2. 下载最新的 `BreatheTool.dmg`
+3. 打开 DMG，将 `BreatheTool.app` 拖入 `Applications` 文件夹
+4. 首次打开：**右键点击 App → 打开**（未签名应用的安全提示）
 
-> ⚠️ This app is **not signed** with an Apple Developer certificate.  
-> On first launch, right-click the app and select **Open**, then click **Open** in the dialog.
+> 💡 本应用使用 Apple 的 ad-hoc 签名，无需开发者账号。  
+> 首次启动时 macOS 可能提示「无法验证开发者」，请右键点击 → **打开** → 再点一次 **打开** 即可。
 
-### Build from Source
+### 从源码编译
 
 ```bash
-# Requires Xcode Command Line Tools
+# 需要安装 Xcode Command Line Tools
 git clone https://github.com/BlackMendrew/Breathe_tool.git
 cd Breathe_tool
 make
@@ -54,51 +55,50 @@ open BreatheTool.app
 
 ---
 
-## Usage / 使用方式
+## 使用方式
 
-| Action | How |
-|--------|-----|
-| Start / Pause breathing | Click the center of the window |
-| Move the window | Drag anywhere on the window |
-| Show / Hide the window | Click the 🫁 menu bar icon → "显示 / 隐藏" |
-| Change inhale duration | Menu bar → "吸气" → select seconds |
-| Change exhale duration | Menu bar → "呼气" → select seconds |
-| Adjust opacity | Menu bar → transparency slider |
-| Quit | Menu bar → "退出" |
+| 操作 | 方法 |
+|------|------|
+| 开始 / 暂停呼吸 | 点击窗口中心 |
+| 移动窗口 | 拖拽窗口任意位置 |
+| 显示 / 隐藏窗口 | 菜单栏 🫁 图标 →「显示 / 隐藏」 |
+| 调节吸气时长 | 菜单栏 →「吸气」→ 选择秒数 |
+| 调节呼气时长 | 菜单栏 →「呼气」→ 选择秒数 |
+| 调节透明度 | 菜单栏 → 滑动透明度滑块 |
+| 退出 | 菜单栏 →「退出」 |
 
-### Keyboard Shortcuts / 快捷键
+### 快捷键
 
-| Key | Action |
-|-----|--------|
-| Click window center | Start / Pause |
-| `Space` (in menu) | Start / Pause |
-| `B` (in menu) | Show / Hide window |
-
----
-
-## Tech Stack / 技术栈
-
-- **Swift 5.9+** / **SwiftUI** — application UI
-- **AppKit** (`NSPanel`) — floating window with `canJoinAllSpaces` + `fullScreenAuxiliary`
-- **Combine** — reactive state management
-- **macOS 14+** — minimum deployment target
-
-### Window Floating Strategy
-
-The tool uses an `NSPanel` with:
-```
-.level = floatingWindow + 10
-.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .stationary]
-```
-
-This ensures visibility across all macOS Spaces, including fullscreen applications.
+| 按键 | 功能 |
+|------|------|
+| 点击窗口中心 | 开始 / 暂停 |
+| 菜单栏 `空格` | 开始 / 暂停 |
+| 菜单栏 `B` | 显示 / 隐藏窗口 |
 
 ---
 
-## License
+## 技术实现
+
+- **Swift 5.9+** / **SwiftUI** — 界面渲染
+- **AppKit** (`NSPanel`) — 悬浮窗口，使用 `canJoinAllSpaces` + `fullScreenAuxiliary`
+- **Combine** — 响应式状态管理
+- **macOS 14+** — 最低部署版本
+
+### 悬浮窗口原理
+
+```
+NSPanel 窗口级别: floatingWindow + 10
+collectionBehavior: [.canJoinAllSpaces, .fullScreenAuxiliary, .stationary]
+```
+
+确保窗口在所有 macOS 空间（包括全屏应用）中可见。
+
+---
+
+## 许可证
 
 MIT
 
 ---
 
-*Made with ❤️ for better breathing.*
+*好好呼吸 ❤️*
