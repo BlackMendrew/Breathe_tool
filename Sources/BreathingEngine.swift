@@ -8,10 +8,8 @@ final class BreathingEngine: ObservableObject {
 
         var label: String {
             switch self {
-            case .inhale:           return "吸气"
-            case .holdAfterInhale:  return "屏息"
-            case .exhale:           return "呼气"
-            case .holdAfterExhale:  return "屏息"
+            case .inhale, .holdAfterInhale:   return "吸气"
+            case .exhale, .holdAfterExhale:   return "呼气"
             }
         }
 
