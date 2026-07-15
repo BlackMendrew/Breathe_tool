@@ -13,9 +13,7 @@ struct ContentView: View {
 
     private var compactBody: some View {
         ZStack {
-            Rectangle()
-                .fill(engine.phase.color.opacity(engine.brightness))
-                .animation(.easeInOut(duration: 0.8), value: engine.phase)
+            Rectangle().fill(engine.breathColor.opacity(engine.brightness))
 
             HStack(spacing: 6) {
                 Text(engine.phase.label)
@@ -36,16 +34,14 @@ struct ContentView: View {
 
     private var circleBody: some View {
         ZStack {
-            Rectangle()
-                .fill(engine.phase.color.opacity(engine.brightness))
-                .animation(.easeInOut(duration: 0.8), value: engine.phase)
+            Rectangle().fill(engine.breathColor.opacity(engine.brightness))
 
             Circle()
                 .fill(
                     RadialGradient(
                         gradient: Gradient(colors: [
-                            engine.phase.color.opacity(0.45),
-                            engine.phase.color.opacity(0.08),
+                            engine.breathColor.opacity(0.45),
+                            engine.breathColor.opacity(0.08),
                         ]),
                         center: .center,
                         startRadius: 15,

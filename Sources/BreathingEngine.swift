@@ -13,13 +13,6 @@ final class BreathingEngine: ObservableObject {
             }
         }
 
-        var color: Color {
-            switch self {
-            case .inhale: return Color(red: 0.30, green: 0.60, blue: 1.00)
-            case .exhale: return Color(red: 1.00, green: 0.52, blue: 0.32)
-            }
-        }
-
         var next: Phase { self == .inhale ? .exhale : .inhale }
     }
 
@@ -58,6 +51,8 @@ final class BreathingEngine: ObservableObject {
     var currentPhaseSeconds: Int {
         phase == .inhale ? inhaleSeconds : exhaleSeconds
     }
+
+    let breathColor = Color(red: 0.22, green: 0.65, blue: 0.70)
 
     var brightness: Double {
         guard isRunning else { return 0.7 }
