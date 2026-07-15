@@ -5,6 +5,36 @@ struct ContentView: View {
     @EnvironmentObject var engine: BreathingEngine
 
     var body: some View {
+        if engine.isCompactMode {
+            compactBody
+        } else {
+            circleBody
+        }
+    }
+
+    private var compactBody: some View {
+        ZStack {
+            VisualEffectBlur(material: .hudWindow, blendingMode: .behindWindow)
+
+            RoundedRectangle(cornerRadius: 9)
+                .fill(
+                    LinearGradient(
+                        gradient: Gradient(colors: [
+                            engine.phase.color.opacity(engine.isRunning ? engine.progress * 0.55 : 0.18),
+                            engine.phase.color.opacity(engine.isRunning ? engine.progress * 0.20 : 0.06),
+                        ]),
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .padding(3)
+        }
+        .frame(width: 120, height: 28)
+        .clipShape(RoundedRectangle(cornerRadius: 9))
+        .onTapGesture { engine.toggle() }
+    }
+
+    private var circleBody: some View {
         ZStack {
             VisualEffectBlur(material: .hudWindow, blendingMode: .behindWindow)
 

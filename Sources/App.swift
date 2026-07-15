@@ -17,15 +17,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         NSApp.setActivationPolicy(.accessory)
         setupStatusItem()
         createBreatheWindow()
+
+        _ = engine.$isCompactMode.sink { [weak self] _ in
+            self?.resizeWindowForMode()
+        }
     }
 
     private func createBreatheWindow() {
         let contentView = ContentView().environmentObject(engine)
         let hostingView = NSHostingView(rootView: contentView)
-        hostingView.frame = NSRect(x: 0, y: 0, width: 180, height: 200)
+        let panelSize = windowSize
+        hostingView.frame = NSRect(origin: .zero, size: panelSize)
 
         let panel = NSPanel(
-            contentRect: NSRect(x: 0, y: 0, width: 180, height: 200),
+            contentRect: NSRect(origin: .zero, size: panelSize),
             styleMask: [.borderless, .nonactivatingPanel],
             backing: .buffered,
             defer: false
@@ -55,6 +60,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         return false
     }
 
+    private var windowSize: NSSize {
+        engine.isCompactMode ? NSSize(width: 120, height: 28) : NSSize(width: 180, height: 200)
+    }
+
+    private func resizeWindowForMode() {
+        guard let panel = breatheWindow,
+              let hosting = panel.contentView as? NSHostingView<ContentView> else { return }
+        let size = windowSize
+        hosting.frame.size = size
+        panel.setContentSize(size)
+    }
+
     private func setupStatusItem() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
 
@@ -65,9 +82,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
         let menu = NSMenu()
 
-        menu.addItem(NSMenuItem(title: "显示 / 隐藏", action: #selector(toggleWindow), keyEquivalent: "b"))
+        menu.addItem(NSMenuItem(title: "显示 / 隐藏", action: #selector(toggleWindow), keyEquivalent: ""))
 
-        let toggleItem = NSMenuItem(title: "开始", action: #selector(toggleBreathing), keyEquivalent: " ")
+        let toggleItem = NSMenuItem(title: "开始", action: #selector(toggleBreathing), keyEquivalent: "")
         toggleItem.target = self
         menu.addItem(toggleItem)
         toggleMenuItem = toggleItem
@@ -78,6 +95,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         menu.addItem(buildDurationItem(label: "呼气", current: engine.exhaleSeconds, action: #selector(setExhale(_:))))
 
         menu.addItem(.separator())
+
+        let compactItem = NSMenuItem(title: "紧凑模式", action: #selector(toggleCompactMode), keyEquivalent: "")
+        compactItem.state = engine.isCompactMode ? .on : .off
+        menu.addItem(compactItem)
+        compactMenuItem = compactItem
 
         let opacityHost = NSMenuItem()
         opacityHost.view = makeOpacityControl()
@@ -120,6 +142,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     private var toggleMenuItem: NSMenuItem?
+    private var compactMenuItem: NSMenuItem?
 
     @objc private func toggleWindow() {
         guard let w = breatheWindow else { return }
@@ -129,6 +152,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     @objc private func toggleBreathing() {
         engine.toggle()
         toggleMenuItem?.title = engine.isRunning ? "暂停" : "开始"
+    }
+
+    @objc private func toggleCompactMode() {
+        engine.isCompactMode.toggle()
+        compactMenuItem?.state = engine.isCompactMode ? .on : .off
     }
 
     @objc private func setInhale(_ sender: NSMenuItem) {

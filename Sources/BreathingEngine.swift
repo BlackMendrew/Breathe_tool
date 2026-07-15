@@ -26,14 +26,31 @@ final class BreathingEngine: ObservableObject {
     private static let minScale: Double = 0.6
     private static let maxScale: Double = 1.3
 
-    @Published var inhaleSeconds: Int = 4  { didSet { if !isRunning { reset() } } }
-    @Published var exhaleSeconds: Int = 4   { didSet { if !isRunning { reset() } } }
+    @Published var inhaleSeconds: Int = 4 {
+        didSet {
+            UserDefaults.standard.set(inhaleSeconds, forKey: "inhaleSeconds")
+            if !isRunning { reset() }
+        }
+    }
+    @Published var exhaleSeconds: Int = 4 {
+        didSet {
+            UserDefaults.standard.set(exhaleSeconds, forKey: "exhaleSeconds")
+            if !isRunning { reset() }
+        }
+    }
 
     @Published var phase: Phase = .inhale
     @Published var progress: Double = BreathingEngine.minScale
     @Published var remainingSeconds: Int = 0
     @Published var isRunning = false
-    @Published var opacity: Double = 0.85
+
+    @Published var opacity: Double = 0.85 {
+        didSet { UserDefaults.standard.set(opacity, forKey: "opacity") }
+    }
+
+    @Published var isCompactMode: Bool = false {
+        didSet { UserDefaults.standard.set(isCompactMode, forKey: "isCompactMode") }
+    }
 
     private var timer: Timer?
     private var phaseStartTime: Date?
@@ -47,6 +64,22 @@ final class BreathingEngine: ObservableObject {
         return phase == .inhale
             ? Color(red: 0.28, green: 0.58, blue: 0.98)
             : Color(red: 0.98, green: 0.50, blue: 0.28)
+    }
+
+    init() {
+        let d = UserDefaults.standard
+
+        let savedInhale = d.integer(forKey: "inhaleSeconds")
+        inhaleSeconds = savedInhale > 0 ? savedInhale : 4
+
+        let savedExhale = d.integer(forKey: "exhaleSeconds")
+        exhaleSeconds = savedExhale > 0 ? savedExhale : 4
+
+        let savedOpacity = d.double(forKey: "opacity")
+        opacity = savedOpacity > 0 ? savedOpacity : 0.85
+
+        isCompactMode = d.bool(forKey: "isCompactMode")
+        remainingSeconds = inhaleSeconds
     }
 
     func start() {
