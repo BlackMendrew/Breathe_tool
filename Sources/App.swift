@@ -1,5 +1,6 @@
 import SwiftUI
 import AppKit
+import Combine
 
 @main
 struct BreatheToolApp: App {
@@ -12,6 +13,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private var statusItem: NSStatusItem?
     private var breatheWindow: NSPanel?
     private let engine = BreathingEngine()
+    private var cancellables = Set<AnyCancellable>()
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
@@ -20,7 +22,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
         _ = engine.$isCompactMode.sink { [weak self] _ in
             self?.resizeWindowForMode()
-        }
+        }.store(in: &cancellables)
     }
 
     private func createBreatheWindow() {
@@ -50,9 +52,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
         breatheWindow = panel
 
-        _ = engine.$opacity.sink { [weak panel] val in
-            panel?.alphaValue = val
-        }
+        engine.$opacity
+            .sink { [weak panel] val in
+                panel?.alphaValue = val
+            }
+            .store(in: &cancellables)
     }
 
     func windowShouldClose(_ sender: NSWindow) -> Bool {
