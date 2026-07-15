@@ -59,13 +59,6 @@ final class BreathingEngine: ObservableObject {
         phase == .inhale ? inhaleSeconds : exhaleSeconds
     }
 
-    var windowTint: Color {
-        guard isRunning else { return .gray }
-        return phase == .inhale
-            ? Color(red: 0.28, green: 0.58, blue: 0.98)
-            : Color(red: 0.98, green: 0.50, blue: 0.28)
-    }
-
     init() {
         let d = UserDefaults.standard
 

@@ -13,19 +13,16 @@ struct ContentView: View {
 
     private var compactBody: some View {
         ZStack {
-            engine.phase.color.opacity(engine.isRunning ? engine.progress * 0.65 : 0.12)
+            Rectangle().fill(engine.phase.color)
 
             HStack(spacing: 6) {
                 Text(engine.phase.label)
-                    .font(.system(size: 15, weight: .semibold, design: .rounded))
+                    .font(.system(size: 14, weight: .semibold, design: .rounded))
                     .foregroundColor(.white)
-
                 Text("·")
-                    .font(.system(size: 13, weight: .light))
-                    .foregroundColor(.white.opacity(0.5))
-
+                    .foregroundColor(.white.opacity(0.4))
                 Text("\(engine.remainingSeconds)")
-                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .font(.system(size: 17, weight: .bold, design: .rounded))
                     .foregroundColor(.white)
                     .contentTransition(.numericText())
             }
@@ -37,53 +34,36 @@ struct ContentView: View {
 
     private var circleBody: some View {
         ZStack {
-            engine.windowTint.opacity(engine.isRunning ? 0.15 : 0.05)
+            Rectangle().fill(engine.phase.color)
 
-            VStack(spacing: 0) {
-                Spacer()
+            Circle()
+                .fill(
+                    RadialGradient(
+                        gradient: Gradient(colors: [
+                            engine.phase.color.opacity(0.45),
+                            engine.phase.color.opacity(0.08),
+                        ]),
+                        center: .center,
+                        startRadius: 15,
+                        endRadius: 65
+                    )
+                )
+                .frame(width: 120, height: 120)
+                .scaleEffect(engine.progress)
 
-                ZStack {
-                    Circle()
-                        .fill(engine.phase.color.opacity(0.10))
-                        .frame(width: 120, height: 120)
-                        .scaleEffect(engine.progress + 0.15)
+            Circle()
+                .stroke(Color.white.opacity(0.2), lineWidth: 2)
+                .frame(width: 120, height: 120)
+                .scaleEffect(engine.progress)
 
-                    Circle()
-                        .fill(
-                            RadialGradient(
-                                gradient: Gradient(colors: [
-                                    engine.phase.color.opacity(0.55),
-                                    engine.phase.color.opacity(0.15),
-                                ]),
-                                center: .center,
-                                startRadius: 8,
-                                endRadius: 60
-                            )
-                        )
-                        .frame(width: 120, height: 120)
-                        .scaleEffect(engine.progress)
-
-                    Circle()
-                        .stroke(
-                            engine.phase.color.opacity(0.7),
-                            style: StrokeStyle(lineWidth: 2.5)
-                        )
-                        .frame(width: 120, height: 120)
-                        .scaleEffect(engine.progress)
-
-                    VStack(spacing: 2) {
-                        Text(engine.phase.label)
-                            .font(.system(size: 16, weight: .medium, design: .rounded))
-                            .foregroundColor(engine.phase.color)
-
-                        Text("\(engine.remainingSeconds)")
-                            .font(.system(size: 36, weight: .bold, design: .rounded))
-                            .foregroundColor(.white)
-                            .contentTransition(.numericText())
-                    }
-                }
-
-                Spacer()
+            VStack(spacing: 4) {
+                Text(engine.phase.label)
+                    .font(.system(size: 16, weight: .medium, design: .rounded))
+                    .foregroundColor(.white.opacity(0.85))
+                Text("\(engine.remainingSeconds)")
+                    .font(.system(size: 36, weight: .bold, design: .rounded))
+                    .foregroundColor(.white)
+                    .contentTransition(.numericText())
             }
         }
         .frame(width: 180, height: 200)
